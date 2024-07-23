@@ -30,12 +30,14 @@ import edge_tts
 import tkinter as tk
 import os
 import uuid
+import tkinter.messagebox as msgbox
+import tkinter.ttk as ttk
 
 """Función principal aqui se genera el audio"""
 async def amain(campo_texto: tk.Text, output_file: str) -> None:
     
     TEXT = campo_texto.get("1.0", tk.END)  # Obtiene el texto ingresado por el usuario
-    VOICE = "ja-JP-NanamiNeural"
+    VOICE = "es-VE-PaolaNeural"
 
     try:
         communicate = edge_tts.Communicate(TEXT, VOICE)
@@ -55,6 +57,7 @@ def crear_carpeta():
         os.makedirs(carpeta)
 
 def reproducir(campo_texto: tk.Text):
+    
     """Función para reproducir texto"""
     crear_carpeta()  # Crea la carpeta "audios" si no existe
     output_file = os.path.join(os.getcwd(), "audios", f"audio_{uuid.uuid4()}.mp3")  # Genera nombre de archivo único
@@ -124,6 +127,11 @@ def paste_text():
     campo_texto.insert(tk.INSERT, clipboard_text)
 
 
+def borrar_texto():
+    respuesta = msgbox.askquestion("Borrar texto", "¿Deseas borrar todo el texto?")
+    if respuesta == "yes":
+        campo_texto.delete("1.0", tk.END)
+
 # Creación de la interfaz gráfica
 ventana = tk.Tk()
 ventana.title("Texto a voz")
@@ -159,14 +167,20 @@ voces_menu.add_command(label="Jorge(MA ES)", command=funcionesVoces)
 etiqueta_texto = tk.Label(ventana)
 etiqueta_texto.pack()
 
+
+
 campo_texto = tk.Text(ventana, font=("Arial", 16), width=50, height=10)
 campo_texto.insert(0.0, "¡Hola! Soy un programa de computadora, encantado de conocerte.\n\nSoy tu asistente de texto a voz, y estoy aquí para ayudarte en tus tareas de lectura y comunicación, incluyendo la asistencia a personas con dislexia. ️\n\n¿Qué puedo hacer por ti?\n\n Convertir texto en voz: Puedo leer en voz alta cualquier texto que me escribas.\n Seleccionar voces: Elige entre diferentes voces masculinas y femeninas para personalizar tu experiencia.\n Reproducir texto: Presiona el botón \"Reproducir\" para escuchar el texto convertido en voz.\n\nEspero serte útil en tu día a día. ¡No dudes en preguntarme cualquier cosa!\n\nRecuerda:\n\n Puedes escribirme todo el texto que desees leer en voz alta.\n Puedes cambiar la voz que utilizas en cualquier momento.\n Presiona el botón \"Reproducir\" para escuchar el texto convertido en voz.\n\n¡Estoy aquí para ayudarte!\n\n¿Qué te gustaría hacer hoy?")
 # Insertar texto en el índice 0.0
 campo_texto.bind("<Button-3>", right_click_handler)
 campo_texto.pack(padx=40, pady=40)
 
+
 boton_reproducir = tk.Button(ventana, text="Reproducir texto", command=lambda: reproducir(campo_texto))
 boton_reproducir.pack()
+
+boton_borrar = tk.Button(ventana, text="Borrar", command=borrar_texto)
+boton_borrar.pack()
 
 ventana.config(menu=menubar)
 ventana.mainloop()
