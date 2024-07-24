@@ -32,19 +32,31 @@ import os
 import uuid
 import tkinter.messagebox as msgbox
 import tkinter.ttk as ttk
+from tqdm import tqdm 
+import time
 
 """Función principal aqui se genera el audio"""
 async def amain(campo_texto: tk.Text, output_file: str) -> None:
-    
     TEXT = campo_texto.get("1.0", tk.END)  # Obtiene el texto ingresado por el usuario
-    VOICE = "es-VE-PaolaNeural"
+    VOICE = "es-AR-ElenaNeural"
 
     try:
-        communicate = edge_tts.Communicate(TEXT, VOICE)
-        await communicate.save(output_file)
-        playsound.playsound(output_file)  # Reproduce el texto generado
+        with tqdm(desc="Convirtiendo texto a voz...", total=100) as pbar:  # Crea barra de progreso
+            communicate = edge_tts.Communicate(TEXT, VOICE)
+            # Simular actualización de progreso (reemplazar con lógica real)
+            for i in range(101):
+                time.sleep(0)
+                pbar.update(i)  # Actualizar la barra de progreso
+                porcentaje = int((i / 100) * 100)  # Calcular porcentaje
+                etiqueta_porcentaje.config(text=f"{porcentaje}%")
+                barra_progreso["value"] = porcentaje
 
-        abrir_carpeta(output_file)  # Abre la carpeta que contiene el archivo de audio
+
+            await communicate.save(output_file)
+            pbar.update(100)  # Actualiza la barra al 100% al finalizar
+
+            playsound.playsound(output_file)  # Reproduce el texto generado
+            abrir_carpeta(output_file)  # Abre la carpeta que contiene el archivo de audio
 
     except Exception as e:
         print(f"Error durante la conversión de texto a voz: {e}")
@@ -73,18 +85,17 @@ def abrir_carpeta(archivo):
 
 def funcion_nuevo():
     # Implementar la acción para crear un nuevo archivo
-    print("archivo en blanco")
-    pass
+    respuesta = msgbox.askquestion("Nuevo Archivo", "¿Deseas Abrit un nuevo Archivo?")
+    if respuesta == "yes":
+        campo_texto.delete("1.0", tk.END)
+
 
 def funcion_abrir():
     # Implementar la acción para abrir un archivo
     print("hola Mundo!!")
     pass
 
-def selecionar():
-    # Implementar la acción para guardar un archivo
-    print("selecionando")
-    pass
+
 #funciones de voz
 def funcionesVoces():
     print("selecionando voz")
@@ -126,6 +137,11 @@ def paste_text():
     # Insert the clipboard text into the text widget
     campo_texto.insert(tk.INSERT, clipboard_text)
 
+def salir():
+    respuesta = msgbox.askquestion("Salir","¿Deseas salir?")
+    if respuesta == "yes":
+         ventana.destroy()
+
 
 def borrar_texto():
     respuesta = msgbox.askquestion("Borrar texto", "¿Deseas borrar todo el texto?")
@@ -135,7 +151,7 @@ def borrar_texto():
 # Creación de la interfaz gráfica
 ventana = tk.Tk()
 ventana.title("Texto a voz")
-ventana.geometry("500x500")
+ventana.geometry("500x600")
 
 menubar = tk.Menu(ventana)
 archivo_menu = tk.Menu(menubar, tearoff=0)
@@ -153,9 +169,8 @@ menubar.add_cascade(label="Ayuda", menu=ayuda_menu)
 # Opciones del menú Archivo
 archivo_menu.add_command(label="Nuevo", command=funcion_nuevo)
 archivo_menu.add_command(label="Abrir", command=funcion_abrir)
-archivo_menu.add_command(label="Selecionar Archivo", command=selecionar)
 archivo_menu.add_separator()  # Agregar una línea separadora
-archivo_menu.add_command(label="Salir", command=ventana.quit)
+archivo_menu.add_command(label="Salir", command=salir)
 
 #lista de voces
 voces_menu.add_command(label="Belkys(FEM ES)",command=funcionesVoces)
@@ -169,8 +184,8 @@ etiqueta_texto.pack()
 
 
 
-campo_texto = tk.Text(ventana, font=("Arial", 16), width=50, height=10)
-campo_texto.insert(0.0, "¡Hola! Soy un programa de computadora, encantado de conocerte.\n\nSoy tu asistente de texto a voz, y estoy aquí para ayudarte en tus tareas de lectura y comunicación, incluyendo la asistencia a personas con dislexia. ️\n\n¿Qué puedo hacer por ti?\n\n Convertir texto en voz: Puedo leer en voz alta cualquier texto que me escribas.\n Seleccionar voces: Elige entre diferentes voces masculinas y femeninas para personalizar tu experiencia.\n Reproducir texto: Presiona el botón \"Reproducir\" para escuchar el texto convertido en voz.\n\nEspero serte útil en tu día a día. ¡No dudes en preguntarme cualquier cosa!\n\nRecuerda:\n\n Puedes escribirme todo el texto que desees leer en voz alta.\n Puedes cambiar la voz que utilizas en cualquier momento.\n Presiona el botón \"Reproducir\" para escuchar el texto convertido en voz.\n\n¡Estoy aquí para ayudarte!\n\n¿Qué te gustaría hacer hoy?")
+campo_texto = tk.Text(ventana, font=("Arial", 16), width=60, height=10)
+campo_texto.insert(0.0, "¡Hola! Soy un programa de computadora, encantado de conocerte.\n\nSoy tu asistente de texto a voz, y estoy aquí para ayudarte en tus tareas de lectura y comunicación, incluyendo la asistencia a personas con dislexia.\n Presiona el botón \"Reproducir Texto\" para escuchar el texto convertido en voz.\nEspero serte útil en tu día a día, \n¿Qué te gustaría hacer hoy?.")
 # Insertar texto en el índice 0.0
 campo_texto.bind("<Button-3>", right_click_handler)
 campo_texto.pack(padx=40, pady=40)
@@ -180,7 +195,13 @@ boton_reproducir = tk.Button(ventana, text="Reproducir texto", command=lambda: r
 boton_reproducir.pack()
 
 boton_borrar = tk.Button(ventana, text="Borrar", command=borrar_texto)
-boton_borrar.pack()
+boton_borrar.pack(pady=10)
+
+barra_progreso = ttk.Progressbar(ventana, orient="horizontal", length=200, mode="determinate")
+barra_progreso.pack(pady=20)
+
+etiqueta_porcentaje = tk.Label(ventana, text="0%")
+etiqueta_porcentaje.pack(pady=10)
 
 ventana.config(menu=menubar)
 ventana.mainloop()
