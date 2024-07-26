@@ -25,7 +25,7 @@ Basic example of edge_tts usage.
 
 """
 import asyncio
-import playsound
+import os
 import edge_tts
 import tkinter as tk
 import os
@@ -38,7 +38,8 @@ import time
 """Función principal aqui se genera el audio"""
 async def amain(campo_texto: tk.Text, output_file: str) -> None:
     TEXT = campo_texto.get("1.0", tk.END)  # Obtiene el texto ingresado por el usuario
-    VOICE = "es-AR-ElenaNeural"
+    VOICE = "es-CL-CatalinaNeural"
+    
 
     try:
         with tqdm(desc="Convirtiendo texto a voz...", total=100) as pbar:  # Crea barra de progreso
@@ -55,7 +56,7 @@ async def amain(campo_texto: tk.Text, output_file: str) -> None:
             await communicate.save(output_file)
             pbar.update(100)  # Actualiza la barra al 100% al finalizar
 
-            playsound.playsound(output_file)  # Reproduce el texto generado
+            os.startfile(output_file)
             abrir_carpeta(output_file)  # Abre la carpeta que contiene el archivo de audio
 
     except Exception as e:
@@ -97,9 +98,18 @@ def funcion_abrir():
 
 
 #funciones de voz
-def funcionesVoces():
+def funcionesVoces(voz):
+    global VOICE 
+    VOICE = voz
     print("selecionando voz")
     pass 
+
+# ... (resto del código)
+
+def seleccionar_Belkys():
+    global VOICE
+    VOICE = "es-CU-BelkysNeural"
+    # Aquí puedes agregar código adicional, por ejemplo, para mostrar un mensaje al usuario indicando que se ha seleccionado la voz de Belkys
 
 def right_click_handler(event):
     # Get the current position of the mouse cursor
@@ -116,11 +126,12 @@ def right_click_handler(event):
 
 
 
-
     # Display the context menu at the current mouse position
     context_menu.tk_popup(x, y)
 
     campo_texto.bind("<Button-3>", right_click_handler)
+
+
 
 def copy_text():
     # Get the selected text
@@ -148,6 +159,34 @@ def borrar_texto():
     if respuesta == "yes":
         campo_texto.delete("1.0", tk.END)
 
+def poema():
+    campo_texto.delete("1.0", tk.END)  # Limpiar el campo
+    campo_texto.insert(tk.INSERT, "Bosque verde y fresco,Susurra el viento entre las hojas, Llega la paz y calma.")
+
+def tigres():
+    campo_texto.delete("1.0", tk.END)  # Limpiar el campo
+    campo_texto.insert(tk.INSERT, "Tres tristes tigres tragaban trigo en un trigal.")
+
+def relatividad():
+    campo_texto.delete("1.0", tk.END)
+    campo_texto.insert(tk.INSERT, "La teoría de la relatividad general, propuesta por Albert Einstein en 1915, revolucionó nuestra comprensión del espacio, el tiempo y la gravedad.")
+
+def puntuacion():
+    campo_texto.delete("1.0", tk.END)  # Limpiar el campo
+    campo_texto.insert(tk.INSERT, "¡Hola! ¿Cómo estás? Me gusta mucho comer pizza, ¿y a ti?")
+
+cuento = """El Laberinto de Cristal
+En una ciudad donde los edificios se alzaban como gigantes de acero y vidrio, existía un lugar apartado, un jardín secreto donde la naturaleza desafiaba la urbanidad. Era un laberinto de cristal, una estructura compleja y luminosa que se erigía en el corazón del parque. Cada panel era una obra de arte, un mosaico de colores que cambiaban con la luz del sol, reflejando el cielo como un caleidoscopio gigante.
+Dentro del laberinto, un camino sinuoso invitaba a perderse. Las paredes de cristal, pulidas hasta la perfección, creaban un efecto hipnótico. Las plantas, exuberantes y variadas, trepaban por las estructuras, transformando el lugar en una selva de cristal. El aire era húmedo y perfumado, una mezcla de tierra mojada y flores exóticas.
+Un joven llamado Alex, curioso por naturaleza, decidió adentrarse en el laberinto. A cada paso, nuevos colores y formas se revelaban ante sus ojos. Las sombras danzaban en el suelo, creando patrones cambiantes que lo hipnotizaban. El sonido del agua, que brotaba de una pequeña fuente oculta entre las plantas, lo acompañaba en su recorrido.
+Al llegar al centro del laberinto, Alex encontró una pequeña habitación de cristal. En el centro, flotaba una esfera luminosa que proyectaba imágenes cambiantes en las paredes. Eran paisajes de otros mundos, galaxias lejanas y criaturas fantásticas. El joven se quedó fascinado, contemplando las maravillas que se desplegaban ante él.
+De repente, la esfera comenzó a emitir una suave melodía. Era una música celestial, que lo envolvió en una sensación de paz y armonía. Los colores de las imágenes se intensificaron, creando una experiencia sensorial única. Alex se sintió como si estuviera flotando en el espacio, explorando los confines del universo.
+Cuando la música cesó, Alex abrió los ojos y se encontró de nuevo en la habitación de cristal. La esfera había dejado de brillar y las imágenes habían desaparecido. Sin embargo, la experiencia que había vivido lo había marcado para siempre. Salió del laberinto con un corazón lleno de asombro y una nueva perspectiva del mundo."""
+
+def historia():
+    campo_texto.delete("1.0",tk.END)
+    campo_texto.insert(tk.INSERT, cuento)
+
 # Creación de la interfaz gráfica
 ventana = tk.Tk()
 ventana.title("Texto a voz")
@@ -162,8 +201,8 @@ menubar.add_cascade(label="Voces", menu=voces_menu)
 
 
 
-ayuda_menu = tk.Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Ayuda", menu=ayuda_menu)
+ejemplo_menu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Ejemplos", menu=ejemplo_menu)
 
 
 # Opciones del menú Archivo
@@ -173,11 +212,18 @@ archivo_menu.add_separator()  # Agregar una línea separadora
 archivo_menu.add_command(label="Salir", command=salir)
 
 #lista de voces
-voces_menu.add_command(label="Belkys(FEM ES)",command=funcionesVoces)
+voces_menu.add_command(label="Belkys (FEM ES)", command=lambda: funcionesVoces("es-CU-BelkysNeural"))
 voces_menu.add_command(label="Tania(FEM ES)", command=funcionesVoces)
 voces_menu.add_command(label="Nanami(FEM JA)", command=funcionesVoces)
 voces_menu.add_separator()
 voces_menu.add_command(label="Jorge(MA ES)", command=funcionesVoces)
+
+ejemplo_menu.add_command(label="haiku", command=poema)
+ejemplo_menu.add_command(label="tigres", command=tigres)
+ejemplo_menu.add_command(label="relactividad", command=relatividad)
+ejemplo_menu.add_command(label="puntuacion", command=puntuacion)
+ejemplo_menu.add_command(label="historia", command=historia)
+
 
 etiqueta_texto = tk.Label(ventana)
 etiqueta_texto.pack()
