@@ -35,10 +35,11 @@ import tkinter.ttk as ttk
 from tqdm import tqdm 
 import time
 
+
 """Función principal aqui se genera el audio"""
-async def amain(campo_texto: tk.Text, output_file: str) -> None:
+async def amain(campo_texto: tk.Text, output_file: str, voice) -> None:
     TEXT = campo_texto.get("1.0", tk.END)  # Obtiene el texto ingresado por el usuario
-    VOICE = "es-CL-CatalinaNeural"
+    VOICE = voice
     
 
     try:
@@ -69,12 +70,12 @@ def crear_carpeta():
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
 
-def reproducir(campo_texto: tk.Text):
+def reproducir(campo_texto: tk.Text,voice):
     
     """Función para reproducir texto"""
     crear_carpeta()  # Crea la carpeta "audios" si no existe
     output_file = os.path.join(os.getcwd(), "audios", f"audio_{uuid.uuid4()}.mp3")  # Genera nombre de archivo único
-    asyncio.run(amain(campo_texto, output_file))
+    asyncio.run(amain(campo_texto, output_file, voice))
 
 
 def abrir_carpeta(archivo):
@@ -212,7 +213,7 @@ archivo_menu.add_separator()  # Agregar una línea separadora
 archivo_menu.add_command(label="Salir", command=salir)
 
 #lista de voces
-voces_menu.add_command(label="Belkys (FEM ES)", command=lambda: funcionesVoces("es-CU-BelkysNeural"))
+voces_menu.add_command(label="Belkys (FEM ES)", command=lambda: funcionesVoces(voice="es-CU-BelkysNeural"))
 voces_menu.add_command(label="Tania(FEM ES)", command=funcionesVoces)
 voces_menu.add_command(label="Nanami(FEM JA)", command=funcionesVoces)
 voces_menu.add_separator()
@@ -237,7 +238,7 @@ campo_texto.bind("<Button-3>", right_click_handler)
 campo_texto.pack(padx=40, pady=40)
 
 
-boton_reproducir = tk.Button(ventana, text="Reproducir texto", command=lambda: reproducir(campo_texto))
+boton_reproducir = tk.Button(ventana, text="Reproducir texto", command=lambda: reproducir(campo_texto,voice="es-CL-CatalinaNeural"))
 boton_reproducir.pack()
 
 boton_borrar = tk.Button(ventana, text="Borrar", command=borrar_texto)
