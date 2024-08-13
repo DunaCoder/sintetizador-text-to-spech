@@ -2,28 +2,11 @@
 
 #!/usr/bin/env python3
 
-"""
 
 #lista de voces
 # es-PY-TaniaNeural
 # ja-JP-NanamiNeural
-# es-VE-PaolaNeural
-# es-MX-DaliaNeural
-# es-EC-AndreaNeural
-# es-AR-ElenaNeural
-# es-CL-CatalinaNeural
-# es-DO-RamonaNeural
-# es-ES-ElviraNeural
-# es-GQ-TeresaNeural
-# es-CU-BelkysNeural
 
-# en-ZA-LeahNeural
-
-"hola soy un programa de computadora, es un placer conocerte"
-
-Basic example of edge_tts usage.
-
-"""
 import asyncio
 import os
 import edge_tts
@@ -35,6 +18,7 @@ import tkinter.ttk as ttk
 from tqdm import tqdm 
 import time
 
+voz = "es-CL-CatalinaNeural"
 
 """Función principal aqui se genera el audio"""
 async def amain(campo_texto: tk.Text, output_file: str, voice) -> None:
@@ -70,12 +54,12 @@ def crear_carpeta():
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
 
-def reproducir(campo_texto: tk.Text,voice):
+def reproducir(campo_texto: tk.Text):
     
     """Función para reproducir texto"""
     crear_carpeta()  # Crea la carpeta "audios" si no existe
     output_file = os.path.join(os.getcwd(), "audios", f"audio_{uuid.uuid4()}.mp3")  # Genera nombre de archivo único
-    asyncio.run(amain(campo_texto, output_file, voice))
+    asyncio.run(amain(campo_texto, output_file, voz))
 
 
 def abrir_carpeta(archivo):
@@ -87,30 +71,51 @@ def abrir_carpeta(archivo):
 
 def funcion_nuevo():
     # Implementar la acción para crear un nuevo archivo
-    respuesta = msgbox.askquestion("Nuevo Archivo", "¿Deseas Abrit un nuevo Archivo?")
+    respuesta = msgbox.askquestion("Nuevo Archivo", "¿Deseas Abrir un nuevo Archivo?")
     if respuesta == "yes":
         campo_texto.delete("1.0", tk.END)
 
 
-def funcion_abrir():
-    # Implementar la acción para abrir un archivo
-    print("hola Mundo!!")
-    pass
+# def funcion_abrir():
+#     # Implementar la acción para abrir un archivo
+#     print("hola Mundo!!")
+#     pass
 
 
-#funciones de voz
-def funcionesVoces(voz):
-    global VOICE 
-    VOICE = voz
-    print("selecionando voz")
-    pass 
-
-# ... (resto del código)
-
+#voces
 def seleccionar_Belkys():
-    global VOICE
-    VOICE = "es-CU-BelkysNeural"
+    global voz
+    voz = "es-CU-BelkysNeural"
     # Aquí puedes agregar código adicional, por ejemplo, para mostrar un mensaje al usuario indicando que se ha seleccionado la voz de Belkys
+
+def seleccionar_Andrea():
+    global voz
+    voz = "es-EC-AndreaNeural"
+    # Aquí puedes agregar código adicional, por ejemplo, para mostrar un mensaje al usuario indicando que se ha seleccionado la voz de Belkys
+
+def Predeterminada():
+    global voz
+    voz = "es-CL-CatalinaNeural"
+
+def selecionar_Ramona():
+    global voz
+    voz = "es-DO-RamonaNeural"
+
+def selecionar_ELvira():
+    global voz
+    voz = "es-ES-ElviraNeural"
+
+def selecionar_Teresa():
+    global voz
+    voz =  "es-GQ-TeresaNeural"
+
+def selecionar_Tania():
+    global voz
+    voz = "es-PY-TaniaNeural"
+
+def selecionar_Sebastian():
+    global voz
+    voz = "es-VE-SebastianNeural"
 
 def right_click_handler(event):
     # Get the current position of the mouse cursor
@@ -208,16 +213,20 @@ menubar.add_cascade(label="Ejemplos", menu=ejemplo_menu)
 
 # Opciones del menú Archivo
 archivo_menu.add_command(label="Nuevo", command=funcion_nuevo)
-archivo_menu.add_command(label="Abrir", command=funcion_abrir)
+# archivo_menu.add_command(label="Abrir", command=funcion_abrir)
 archivo_menu.add_separator()  # Agregar una línea separadora
 archivo_menu.add_command(label="Salir", command=salir)
 
 #lista de voces
-voces_menu.add_command(label="Belkys (FEM ES)", command=lambda: funcionesVoces(voice="es-CU-BelkysNeural"))
-voces_menu.add_command(label="Tania(FEM ES)", command=funcionesVoces)
-voces_menu.add_command(label="Nanami(FEM JA)", command=funcionesVoces)
+voces_menu.add_command(label="Belkys (FEM ES)", command=lambda: seleccionar_Belkys())
+voces_menu.add_command(label="Andrea(FEM ES)", command=lambda: seleccionar_Andrea())
+voces_menu.add_command(label="Catalina(FEM ES Predeterminada)", command=lambda: Predeterminada())
+voces_menu.add_command(label="Ramona (FEM ES)", command=lambda: selecionar_Ramona())
+voces_menu.add_command(label="Elviira (FEM ES)", command=lambda: selecionar_ELvira())
+voces_menu.add_command(label="Teresa (FEM ES)", command=lambda: selecionar_Teresa())
+voces_menu.add_command(label="Tania (FEM ES)", command=lambda: selecionar_Tania())
 voces_menu.add_separator()
-voces_menu.add_command(label="Jorge(MA ES)", command=funcionesVoces)
+voces_menu.add_command(label="Sebastian(MA ES)", command=lambda: selecionar_Sebastian())
 
 ejemplo_menu.add_command(label="haiku", command=poema)
 ejemplo_menu.add_command(label="tigres", command=tigres)
@@ -238,7 +247,7 @@ campo_texto.bind("<Button-3>", right_click_handler)
 campo_texto.pack(padx=40, pady=40)
 
 
-boton_reproducir = tk.Button(ventana, text="Reproducir texto", command=lambda: reproducir(campo_texto,voice="es-CL-CatalinaNeural"))
+boton_reproducir = tk.Button(ventana, text="Reproducir texto", command=lambda: reproducir(campo_texto))
 boton_reproducir.pack()
 
 boton_borrar = tk.Button(ventana, text="Borrar", command=borrar_texto)
