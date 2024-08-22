@@ -196,11 +196,13 @@ def historia():
 # Creación de la interfaz gráfica
 ventana = tk.Tk()
 ventana.title("Texto a voz")
-ventana.geometry("500x600")
+ventana.geometry("800x800")
+ventana.configure(bg="#212529")
 
 menubar = tk.Menu(ventana)
 archivo_menu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Archivo", menu=archivo_menu)
+menubar.configure(bg="#212529")
 
 voces_menu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Voces", menu=voces_menu)
@@ -235,28 +237,33 @@ ejemplo_menu.add_command(label="puntuacion", command=puntuacion)
 ejemplo_menu.add_command(label="historia", command=historia)
 
 
-etiqueta_texto = tk.Label(ventana)
-etiqueta_texto.pack()
 
 
 
-campo_texto = tk.Text(ventana, font=("Arial", 16), width=60, height=10)
+campo_texto = tk.Text(ventana, font=("Arial", 11), width=90, height=20)
+campo_texto.configure(bg='#353535', fg="#ffffff")
 campo_texto.insert(0.0, "¡Hola! Soy un programa de computadora, encantado de conocerte.\n\nSoy tu asistente de texto a voz, y estoy aquí para ayudarte en tus tareas de lectura y comunicación, incluyendo la asistencia a personas con dislexia.\n Presiona el botón \"Reproducir Texto\" para escuchar el texto convertido en voz.\nEspero serte útil en tu día a día, \n¿Qué te gustaría hacer hoy?.")
 # Insertar texto en el índice 0.0
 campo_texto.bind("<Button-3>", right_click_handler)
-campo_texto.pack(padx=40, pady=40)
+campo_texto.pack(padx=10, pady=80)
 
-
-boton_reproducir = tk.Button(ventana, text="Reproducir texto", command=lambda: reproducir(campo_texto))
+boton_reproducir = tk.Button(ventana, text="Generar Audio", command=lambda: reproducir(campo_texto),
+                            relief="flat", bd=0, bg="#2c9f45", fg="#ffffff",
+                            font=("Arial", 12), padx=10, pady=5, cursor="hand2")
 boton_reproducir.pack()
 
 boton_borrar = tk.Button(ventana, text="Borrar", command=borrar_texto)
+boton_borrar.configure(bg="#e63946", fg="#ffffff",
+                            relief="flat", bd=0)
 boton_borrar.pack(pady=10)
 
 barra_progreso = ttk.Progressbar(ventana, orient="horizontal", length=200, mode="determinate")
+
 barra_progreso.pack(pady=20)
 
 etiqueta_porcentaje = tk.Label(ventana, text="0%")
+etiqueta_porcentaje.configure(bg="#212529", fg="#ffffff",
+                            relief="flat", bd=0)
 etiqueta_porcentaje.pack(pady=10)
 
 ventana.config(menu=menubar)
